@@ -280,7 +280,7 @@ int32 ABaseCharacter::PlayDeathMontage()
 
 	if (Pose < EDeathPose::EDP_MAX)
 	{
-		DeathPose = Pose;
+		DeathPose = Pose; // 랜덤이라서 enum class 처럼 명시적으로 해줄 필요 없음
 	}
 
 	return Selection;

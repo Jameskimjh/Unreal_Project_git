@@ -73,6 +73,7 @@ void AWeapon::PlayEquipSound()
 			GetActorLocation()
 		);
 
+
 	}
 }
 
