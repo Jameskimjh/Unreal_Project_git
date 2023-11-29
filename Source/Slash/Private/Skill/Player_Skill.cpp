@@ -18,7 +18,6 @@ APlayer_Skill::APlayer_Skill()
 void APlayer_Skill::BeginPlay()
 {
 	Super::BeginPlay();
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(APlayer_Skill::)
 }
 
 // Called every frame

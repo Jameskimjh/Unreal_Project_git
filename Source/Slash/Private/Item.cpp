@@ -60,9 +60,6 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		PickUpInterface->SetOverlappingItem(nullptr);
 
-
-
-
 	}
 
 }
