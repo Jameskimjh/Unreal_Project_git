@@ -88,11 +88,12 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, const FName& InSocke
 
 void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+		// 들고있는 객체가 Enemy 이거나 overlap된 객체가 Enemy면 return한다
 	if (GetOwner()->ActorHasTag(TEXT("Enemy")) && OtherActor->ActorHasTag(TEXT("Enemy"))) 
 	{
 		return;
 	}
-	// Weapon 이 Enemy랑 부딪혔을 때 호출되는 것을 막기 위함...
+	// Weapon 이 Enemy랑 부딪혔을 때 호출되는 것을 막기 위함... 
 	
 	FHitResult BoxHit;
 	BoxTrace(BoxHit);

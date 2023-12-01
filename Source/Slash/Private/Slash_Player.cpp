@@ -423,7 +423,6 @@ void ASlash_Player::Die()
 	DisableMeshCollision();
 
 	AUIControllerClass* PlayerController = Cast<AUIControllerClass>(GetController());
-
 	if (PlayerController != nullptr)
 	{
 		PlayerController->ShowRestartWidget();

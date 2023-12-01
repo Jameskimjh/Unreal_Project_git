@@ -36,7 +36,7 @@ protected:
 	void ExecuteGetHit(FHitResult& BoxHit);
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void CreateFields(const FVector& FieldLocation);
+	void CreateFields(const FVector& FieldLocation); // editor 내 weapon blueprint에서 구현됐음
 
 private:
 	void BoxTrace(FHitResult& BoxHit);
