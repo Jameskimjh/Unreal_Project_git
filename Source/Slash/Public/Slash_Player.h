@@ -25,6 +25,7 @@ public:
 	virtual void Jump() override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 	virtual void SetOverlappingItem(class AItem* Item);
 	virtual void AddPotion(AHealthPotion* Potion) override;
@@ -52,6 +53,7 @@ protected:
 	void LookUp(float value);
 	void Turn(float value);
 
+	void BurstSkill();
 	void RKeyPressed();
 	void UsingPotion();
 	void Dash();
@@ -131,8 +133,13 @@ private:
 	UPROPERTY(EditDefaultsOnly,Category = Montages)
 	UAnimMontage* CureMontage;
 
+
 	UPROPERTY(EditDefaultsOnly,Category = Skill)
 	TObjectPtr<class UAnimMontage> SkillMontage;
+
+
+	UPROPERTY(EditAnywhere, category = Skill)
+	UParticleSystemComponent* Skill_Component;
 
 public:
 	FORCEINLINE ECharacterState GetCharacterState() const{ return State; }

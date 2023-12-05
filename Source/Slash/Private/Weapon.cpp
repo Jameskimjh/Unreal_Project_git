@@ -40,7 +40,7 @@ void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOw
 	{
 		PlayEquipSound();
 	}
-	// 여기때문에 게임 시작할때 소리가 남
+	// 여기때문에 게임 시작할때 소리가 남, 여기서 조건문을 통해 PlaySound의 조건을 추가해준다.
 
 	DisableSphereCollision();
 	DeactivateEmbers();
@@ -72,8 +72,6 @@ void AWeapon::PlayEquipSound()
 			EquipSound,
 			GetActorLocation()
 		);
-
-
 	}
 }
 
@@ -119,6 +117,7 @@ void AWeapon::ExecuteGetHit(FHitResult& BoxHit)
 	{
 		HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint, GetOwner());
 		//Blueprint 네이티브 이벤트 함수의 시그니처는 항상 UObject* 타입의 첫 번째 인자를 가져야 한다
+		//왜냐하면 BoxHit.GetActor()를 포함하지 않으면 해당 함수? 액터?를 찾을 수 없게 된다.
 
 	}
 }

@@ -12,6 +12,8 @@
 #include "BaseCharacter.h"
 #include "HealthPotion.h"
 #include "Slash_Anim.h"
+#include "Kismet/GameplayStatics.h"  
+#include "Particles/ParticleSystem.h"
 
 
 ASlash_Player::ASlash_Player()
@@ -22,7 +24,7 @@ ASlash_Player::ASlash_Player()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
 	springArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	springArm->SetupAttachment(GetRootComponent());
-	springArm->TargetArmLength = 500.0f;
+	springArm->TargetArmLength = 550.0f;
 
 	Camera->SetupAttachment(springArm);
 
@@ -49,7 +51,7 @@ ASlash_Player::ASlash_Player()
 	Dash_Distance = 3500.0f;
 	restoreHP = 20.0f;
 
-
+	
 
 }
 
@@ -69,6 +71,9 @@ void ASlash_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ASlash_Player::Attack); //공격
 	PlayerInputComponent->BindAction(FName("Dash"), IE_Pressed, this, &ASlash_Player::PlayRoll); // 대쉬
 	PlayerInputComponent->BindAction(FName("Potion"), IE_Pressed, this, &ASlash_Player::UsingPotion); // 물약 사용
+	PlayerInputComponent->BindAction(FName("Burst"), IE_Pressed, this, &ASlash_Player::BurstSkill);// 스킬 사용
+
+	
 }
 
 void ASlash_Player::Jump()
@@ -85,6 +90,9 @@ void ASlash_Player::Jump()
 float ASlash_Player::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	HandleDamage(DamageAmount);
+	// 이 DamageAmount의 값은 ApplyDamage에서 호출할 때 사용된 데미지 변수를 받는다
+	// ApplyDamage의 리턴값이 TakeDamage이기 때문  
+
 	SetHUDHealth();
 	
 	return DamageAmount;
@@ -98,9 +106,7 @@ void ASlash_Player::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hi
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 	if (Attributes && Attributes->GetHealthPercent() > 0.0f)
 	{
-
 		ActionState = EActionState::EAS_HitReaction;
-
 	}
 }
 
@@ -147,7 +153,6 @@ void ASlash_Player::BeginPlay()
 	Tags.Add(FName("EngageableTarget"));
 	InitializeSlashOverlay(); // WBP_PlayerOverlay HealthBar
 
-	
 }
 
 void ASlash_Player::Tick(float DeltaTime)
@@ -218,16 +223,27 @@ void ASlash_Player::Turn(float value)
 // ------------------------------------------- 무기에 Overlap됐을 때 클릭시 착용 이벤트 발생 -------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------------
 
+void ASlash_Player::BurstSkill()
+{
+	
+
+
+
+	
+}
+
 void ASlash_Player::RKeyPressed()
 {
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	
 	if (OverlappingWeapon)
 	{
-		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"),this,this );
-		State = ECharacterState::ECS_EquippedOnehandedWeapon;
-		OverlappingItem = nullptr;
-		EquippedWeapon = OverlappingWeapon;
+		//OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"),this,this );
+		//State = ECharacterState::ECS_EquippedOnehandedWeapon;
+		//OverlappingItem = nullptr;
+		//EquippedWeapon = OverlappingWeapon;
+
+		EquipWeapon(OverlappingWeapon);
 	}
 	
 	else

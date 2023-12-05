@@ -30,6 +30,7 @@ protected:
 
 	virtual void BeginPlay() override;
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
+
 	virtual void Attack();
 	virtual void Die();
 	virtual void Roll(UAnimMontage* Montage);
@@ -153,6 +154,8 @@ private:
 	 
 public:
 	FORCEINLINE TEnumAsByte<EDeathPose> GetDeathPose() const { return DeathPose; }
+	// enum 타입을 안전하게 다룰 수 있도록 도와주는 템플릿 클래스 
+	// 정수 값인 열거형의 명시성을 강화 + 오류 방지
 
 protected:
 

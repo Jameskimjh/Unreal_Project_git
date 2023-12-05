@@ -68,6 +68,8 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 }
 
 
+
+
 void AEnemy::Destroyed()
 {
 	if (EquippedWeapon)
@@ -91,6 +93,8 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 
 
 }
+
+
 
 void AEnemy::BeginPlay()
 {

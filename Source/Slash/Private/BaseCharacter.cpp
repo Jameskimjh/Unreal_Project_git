@@ -39,6 +39,8 @@ void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* H
 	SpawnHitParticles(ImpactPoint);
 }
 
+
+
 void ABaseCharacter::Attack()
 {
 	if (CombatTarget && CombatTarget->ActorHasTag(FName("Dead")))
@@ -180,7 +182,7 @@ int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArr
 	return Selection;
 }
 
-//***************************************************ÄÞº¸°ø°Ý*********************************************************************************
+//*************************************************** ÄÞº¸°ø°Ý *********************************************************************************
 //*******************************************************************************************************************************************
 void ABaseCharacter::ProcessComboCommand()
 {

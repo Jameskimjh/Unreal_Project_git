@@ -9,7 +9,6 @@
 
 
 class UGeometryCollectionComponent;
-
 UCLASS()
 class SLASH_API ABreakableActor : public AActor, public IHitInterface
 {

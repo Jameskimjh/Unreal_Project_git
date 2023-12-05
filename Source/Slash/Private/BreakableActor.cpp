@@ -3,6 +3,7 @@
 #include "BreakableActor.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Treasure.h"
+#include "HealthPotion.h"
 #include "Components/CapsuleComponent.h"
 
 
@@ -55,11 +56,11 @@ void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint, AActor* 
 	//	World->SpawnActor<ATreasure>(Treasureclasses[Selection], Location, GetActorRotation());
 
 	//}
-	
 	if (World && HealthPostion)
 	{
 		FVector Location = GetActorLocation();
 		World->SpawnActor<AHealthPotion>(HealthPostion, Location, GetActorRotation());
 	}
+	
 }
 
