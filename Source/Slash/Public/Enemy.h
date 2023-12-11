@@ -28,6 +28,7 @@ public:
 	// <IHitInterface>
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 	// <IHitInterface>
+	virtual void HandleDamage(float DamageAmount) override;
 
 protected:
 	//AActor
@@ -36,10 +37,9 @@ protected:
 
 	//ABaseCharacter
 	virtual void Die() override;
+	virtual void AttackEnd() override;
 	virtual void Attack() override; // АјАн 
 	virtual bool CanAttack() override;
-	virtual void AttackEnd() override;
-	virtual void HandleDamage(float DamageAmount) override;
 	//ABaseCharacter
 
 

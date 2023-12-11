@@ -52,7 +52,6 @@ ASlash_Player::ASlash_Player()
 	restoreHP = 20.0f;
 
 	
-
 }
 
 
@@ -71,7 +70,7 @@ void ASlash_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ASlash_Player::Attack); //공격
 	PlayerInputComponent->BindAction(FName("Dash"), IE_Pressed, this, &ASlash_Player::PlayRoll); // 대쉬
 	PlayerInputComponent->BindAction(FName("Potion"), IE_Pressed, this, &ASlash_Player::UsingPotion); // 물약 사용
-	PlayerInputComponent->BindAction(FName("Burst"), IE_Pressed, this, &ASlash_Player::BurstSkill);// 스킬 사용
+	PlayerInputComponent->BindAction(FName("Burst"), IE_Pressed, this, &ASlash_Player::PlaySkill);// 스킬 사용
 
 	
 }
@@ -98,7 +97,7 @@ float ASlash_Player::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	return DamageAmount;
 }
 
-// GetHite_Implementation : 공격을 받았을 때 발생하는 행동
+// GetHit_Implementation : Weapon으로부터 공격을 받았을 때 발생하는 행동
 void ASlash_Player::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) 
 {
 	Super::GetHit_Implementation(ImpactPoint,Hitter);
@@ -152,6 +151,7 @@ void ASlash_Player::BeginPlay()
 
 	Tags.Add(FName("EngageableTarget"));
 	InitializeSlashOverlay(); // WBP_PlayerOverlay HealthBar
+
 
 }
 
@@ -214,23 +214,83 @@ void ASlash_Player::LookUp(float value)
 void ASlash_Player::Turn(float value)
 {
 	AddControllerYawInput(value);
-
 }
+
 //**********************************************************************************************************************************
 //**********************************************************************************************************************************
+
+//************************************************ 스킬 구현************************************************************************
+//*********************************************************************************************************************************
+//*********************************************************************************************************************************
+//*********************************************************************************************************************************
+
+void ASlash_Player::BurstSkill()
+{
+	UWorld* World = GetWorld();
+
+	TArray<AActor*> IgnoreActors;
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+	
+	FVector SpawnLocation = GetActorLocation() + FVector(0.0f, 0.0f, -90.0f);
+	FTransform Location = FTransform(GetActorRotation(), SpawnLocation, GetActorScale3D()*2.0f);
+	
+	
+	if (PlayerController)
+	{
+		AActor* Player = PlayerController->GetPawn();
+
+		if (World && skill && Player)
+		{
+			IgnoreActors.Add(Player);
+			UE_LOG(LogTemp, Warning, TEXT("SKillON"));
+			UGameplayStatics::ApplyRadialDamage(World, 50.0f, GetActorLocation(), 500.0f, UDamageType::StaticClass(), IgnoreActors, this, this->GetController(), false, ECC_Visibility);
+			UGameplayStatics::SpawnEmitterAtLocation(World, SkillParticle, Location, true);
+			Attributes->HandleStamina(-50.0f);
+			SetHUDStamina();
+			// 만약 Execute_ 메서드를 사용하고 싶으면 부딪힌 정보를 가져와야하는데 여긴 없다
+			// KismetSystemLibrary를 사용해야 한다.
+		}
+	}
+	
+}
+
+void ASlash_Player::SkillEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
+void ASlash_Player::PlaySkill()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (CanSkill(AnimInstance))
+	{
+		AnimInstance->Montage_Play(BurstSkill_Montage, 1.5f);
+		ActionState = EActionState::EAS_Burst;
+		
+	}
+}
+bool ASlash_Player::CanSkill(UAnimInstance* AnimInstance)
+{
+	return AnimInstance && BurstSkill_Montage && CanAttack() && (Attributes->GetStamina() > 50.0f) && (ActionState == EActionState::EAS_Unoccupied);
+}
+
+
+
+
+
+//*********************************************************************************************************************************
+//*********************************************************************************************************************************
+//*********************************************************************************************************************************
+//*********************************************************************************************************************************
+
+
 
 
 // ------------------------------------------- 무기에 Overlap됐을 때 클릭시 착용 이벤트 발생 -------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------------
 
-void ASlash_Player::BurstSkill()
-{
-	
-
-
-
-	
-}
 
 void ASlash_Player::RKeyPressed()
 {
@@ -264,49 +324,6 @@ void ASlash_Player::RKeyPressed()
 }
 //--------------------------------------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------------------------
-
-
-
-void ASlash_Player::Dash()
-{
-	
-	if ((ActionState == EActionState::EAS_Unoccupied) && (Attributes->GetStamina() >= 30.0f))
-	{
-		UAnimInstance* SkillAnim = GetMesh()->GetAnimInstance();
-
-		ActionState = EActionState::EAS_Dash;
-		const FRotator Rotation = GetActorForwardVector().Rotation(); // 캐릭터 액터가 앞을 바라보는 방향
-		const FRotator YawRotation(0.0f, Rotation.Yaw, 0.0f);
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		Anim->Montage_Play(SkillMontage);
-
-		GetCharacterMovement()->BrakingFrictionFactor = 0.0f; // 마찰계수
-		LaunchCharacter(Direction * Dash_Distance, true, true);
-		
-		Attributes->UseStamaina();
-		GetWorldTimerManager().SetTimer(timerHandle, this, &ASlash_Player::StopDashing, 0.5f, false);
-
-	}
-	
-}
-
-void ASlash_Player::StopDashing()
-{
-	UAnimInstance* SkillAnim = GetMesh()->GetAnimInstance();
-
-	GetCharacterMovement()->StopMovementImmediately();
-	Anim->Montage_Stop(0.15f,SkillMontage);
-
-	GetWorldTimerManager().SetTimer(timerHandle, this, &ASlash_Player::ResetDash, 0.3f, false);
-	GetCharacterMovement()->BrakingFrictionFactor = 2.0f;
-}
-
-
-void ASlash_Player::ResetDash()
-{
-	ActionState = EActionState::EAS_Unoccupied;
-
-}
 
 
 

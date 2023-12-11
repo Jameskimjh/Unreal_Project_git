@@ -118,7 +118,7 @@ void AWeapon::ExecuteGetHit(FHitResult& BoxHit)
 		HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint, GetOwner());
 		//Blueprint 네이티브 이벤트 함수의 시그니처는 항상 UObject* 타입의 첫 번째 인자를 가져야 한다
 		//왜냐하면 BoxHit.GetActor()를 포함하지 않으면 해당 함수? 액터?를 찾을 수 없게 된다.
-
+		
 	}
 }
 

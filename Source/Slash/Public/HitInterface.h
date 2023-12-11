@@ -25,5 +25,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void GetHit(const FVector& ImpactPoint, AActor* Hitter);
 
-
+	UFUNCTION(BlueprintNativeEvent)
+	void GetSkill();
+	
 };

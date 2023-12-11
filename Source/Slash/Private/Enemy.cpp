@@ -54,6 +54,8 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 {
 	HandleDamage(DamageAmount);
 	CombatTarget = EventInstigator->GetPawn();
+	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"));
+	
 
 	if (IsInsideAttackRadius())
 	{
@@ -64,6 +66,12 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 	{
 		ChaseTarget();
 	}
+
+	
+	ShowHealthBar();
+
+
+
 	return DamageAmount;
 }
 
@@ -95,7 +103,6 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 }
 
 
-
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -105,6 +112,7 @@ void AEnemy::BeginPlay()
 	}
 	InitializeEnemy();
 	Tags.Add(FName("Enemy"));
+	
 }
 
 void AEnemy::Die()
@@ -327,7 +335,7 @@ AActor* AEnemy::ChoosePatrolTarget()
 	{
 		if (Target != PatrolTarget)
 		{
-			ValidTargets.AddUnique(Target);
+			ValidTargets.AddUnique(Target); // TArray함수에 이미 해당 요소가 존재하는지 확인함
 
 		}
 	}

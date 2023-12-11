@@ -29,7 +29,7 @@ void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* H
 	{
 		DirectionalHitReact(Hitter->GetActorLocation());
 	}
-
+	
 	else
 	{
 		Die();
@@ -38,6 +38,7 @@ void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* H
 	PlayHitSound(ImpactPoint);
 	SpawnHitParticles(ImpactPoint);
 }
+
 
 
 

@@ -7,6 +7,7 @@
 #include "Weapon.h"
 #include "CharacterType.h"
 #include "PickUpInterface.h"
+#include "Skill/Skill.h"
 #include "Slash_Player.generated.h"
 
 class AItem;
@@ -14,6 +15,8 @@ class UAnimMontage;
 class USlashOverlay;
 class AHealthPotion;
 class USlash_Anim;
+class ASkill;
+
 UCLASS()
 class SLASH_API ASlash_Player : public ABaseCharacter,public IPickUpInterface
 {
@@ -53,12 +56,10 @@ protected:
 	void LookUp(float value);
 	void Turn(float value);
 
-	void BurstSkill();
+	
 	void RKeyPressed();
 	void UsingPotion();
-	void Dash();
-	void StopDashing();
-	void ResetDash();
+	
 	
 	virtual void Attack() override;
 	
@@ -92,6 +93,16 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void PotionEnd();
+	// ½ºÅ³***************************
+	UFUNCTION(BlueprintCallable)
+	void BurstSkill();
+
+	UFUNCTION(BlueprintCallable)
+	void SkillEnd();
+
+	void PlaySkill();
+
+	bool CanSkill(UAnimInstance* AnimInstance);
 
 
 private:
@@ -133,13 +144,22 @@ private:
 	UPROPERTY(EditDefaultsOnly,Category = Montages)
 	UAnimMontage* CureMontage;
 
+	UPROPERTY(EditDefaultsOnly,Category = "Skill")
+	UAnimMontage* BurstSkill_Montage;
 
-	UPROPERTY(EditDefaultsOnly,Category = Skill)
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "SKill")
 	TObjectPtr<class UAnimMontage> SkillMontage;
 
 
-	UPROPERTY(EditAnywhere, category = Skill)
-	UParticleSystemComponent* Skill_Component;
+	UPROPERTY(EditAnywhere,Category  = "Skill")
+	TSubclassOf<ASkill> skill;
+
+	UPROPERTY(EditAnywhere,Category = "Skill")
+	UParticleSystem* SkillParticle;
+	
+
 
 public:
 	FORCEINLINE ECharacterState GetCharacterState() const{ return State; }

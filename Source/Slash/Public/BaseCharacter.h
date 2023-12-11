@@ -30,7 +30,7 @@ protected:
 
 	virtual void BeginPlay() override;
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
-
+	
 	virtual void Attack();
 	virtual void Die();
 	virtual void Roll(UAnimMontage* Montage);
