@@ -67,10 +67,6 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 		ChaseTarget();
 	}
 
-	
-	ShowHealthBar();
-
-
 
 	return DamageAmount;
 }
@@ -86,6 +82,7 @@ void AEnemy::Destroyed()
 	}
 }
 
+
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
 	Super::GetHit_Implementation(ImpactPoint,Hitter);
@@ -99,7 +96,21 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 	StopAttackMontage();
 
+}
 
+void AEnemy::GetSkill_Implementation()
+{
+	Super::GetSkill_Implementation();
+
+	if (!IsDead())
+	{
+		ShowHealthBar();
+	}
+
+	ClearPatrolTimer(); // 공격받고도 움직이는걸 막기위함
+	ClearAttackTimer();
+	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
+	StopAttackMontage();
 }
 
 
@@ -331,6 +342,7 @@ void AEnemy::MoveToTarget(AActor* Target)
 AActor* AEnemy::ChoosePatrolTarget()
 {
 	TArray<AActor*> ValidTargets;
+	
 	for (auto Target : PatrolTargets)
 	{
 		if (Target != PatrolTarget)

@@ -29,15 +29,25 @@ protected:
 
 
 	virtual void BeginPlay() override;
+
+
+	//*************Hitinterface**************************************************************
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
+	virtual void GetSkill_Implementation() override;
+	//***************************************************************************************
+	
 	
 	virtual void Attack();
 	virtual void Die();
+	
 	virtual void Roll(UAnimMontage* Montage);
 	
 	void DirectionalHitReact(const FVector& ImpactPoint); // 공격 받을때 방향
+	
+	// ******************데미지를 다루는 virtual 함수 선언********************************
 	virtual void HandleDamage(float DamageAmount);
-
+	//*************************************************************************
+	
 	void PlayHitSound(const FVector& ImpackPoint);			//부딪혔을때 발생하는 소리
 	void SpawnHitParticles(const FVector& ImpactPoint);		// 파티클 스폰
 
@@ -114,6 +124,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	UAnimMontage* AttackMontage; // 공격 몽타주
 	//****************************
+
+	// Enemy가 Hit됐을때 발생하는 몽타주**********************************************
+	UPROPERTY(EditDefaultsOnly,Category = Combat)
+	UAnimMontage* SkillHitReactMontage;
+	//******************************************************************************
+
 
 	//******** 플레이어 콤보 공격 몽타주 ****************************************
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)

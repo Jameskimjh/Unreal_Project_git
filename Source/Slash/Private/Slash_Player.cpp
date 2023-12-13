@@ -46,11 +46,12 @@ ASlash_Player::ASlash_Player()
 	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility,ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+	// Visibility랑 WorldDynamic을 각각 설정
 	GetMesh()->SetGenerateOverlapEvents(true);
 
 	Dash_Distance = 3500.0f;
 	restoreHP = 20.0f;
-
+	Skill_Radius = 500.0f;
 	
 }
 
@@ -224,6 +225,21 @@ void ASlash_Player::Turn(float value)
 //*********************************************************************************************************************************
 //*********************************************************************************************************************************
 
+void ASlash_Player::PlaySkill()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (CanSkill(AnimInstance))
+	{
+		AnimInstance->Montage_Play(BurstSkill_Montage, 1.5f);
+		ActionState = EActionState::EAS_Burst;
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
+	}
+}
+
+// 애니메이션 몽타주에서 Call하는 함수
 void ASlash_Player::BurstSkill()
 {
 	UWorld* World = GetWorld();
@@ -235,7 +251,13 @@ void ASlash_Player::BurstSkill()
 	FVector SpawnLocation = GetActorLocation() + FVector(0.0f, 0.0f, -90.0f);
 	FTransform Location = FTransform(GetActorRotation(), SpawnLocation, GetActorScale3D()*2.0f);
 	
+	// 만약 Execute_ 메서드를 사용하고 싶으면 부딪힌 정보를 가져와야하는데 여긴 없다
+			// KismetSystemLibrary를 사용해야 한다.
 	
+
+	
+	TArray<FHitResult> HitResults;
+
 	if (PlayerController)
 	{
 		AActor* Player = PlayerController->GetPawn();
@@ -243,34 +265,93 @@ void ASlash_Player::BurstSkill()
 		if (World && skill && Player)
 		{
 			IgnoreActors.Add(Player);
+			
 			UE_LOG(LogTemp, Warning, TEXT("SKillON"));
-			UGameplayStatics::ApplyRadialDamage(World, 50.0f, GetActorLocation(), 500.0f, UDamageType::StaticClass(), IgnoreActors, this, this->GetController(), false, ECC_Visibility);
+			
+			
+			UGameplayStatics::ApplyRadialDamage(World, 50.0f, GetActorLocation(), Skill_Radius, UDamageType::StaticClass(), IgnoreActors, this, this->GetController(), false, ECC_Visibility);
+			// 여기서 먼저 ApplyRadialDamage를 통해 TakeDamage를 호출하고 Health 값을 0으로 만든 다음에
+			// GetSkill을 호출한다 그러면 이미 0이 된 상태이기 때문에 BaseCharacter를 상속받은 Enemy에 있는 Die가 호출됨
+
 			UGameplayStatics::SpawnEmitterAtLocation(World, SkillParticle, Location, true);
+		
+			Skill_Check(HitResults);
+			
 			Attributes->HandleStamina(-50.0f);
-			SetHUDStamina();
-			// 만약 Execute_ 메서드를 사용하고 싶으면 부딪힌 정보를 가져와야하는데 여긴 없다
-			// KismetSystemLibrary를 사용해야 한다.
 		}
 	}
 	
 }
 
+void ASlash_Player::Skill_Check(TArray<FHitResult>& HitResults)
+{
+
+	float Radius = Skill_Radius; //공격범위
+
+	// Sphere 모양의 충돌 형태 생성
+	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(Radius);
+
+	// 플레이어 위치를 중심으로 반경 내의 액터를 검출하는 쿼리 생성
+	FVector PlayerLocation = GetActorLocation();
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this); // 자신은 무시한다
+
+
+	bool bHit = GetWorld()->SweepMultiByChannel(
+		HitResults,
+		PlayerLocation,
+		PlayerLocation,
+		FQuat::Identity,
+		ECC_Visibility,
+		CollisionShape,
+		CollisionParams
+	);
+
+	// 검출된 액터들에 대한 처리
+	if (bHit )
+	{
+		for (const FHitResult& HitResult : HitResults)
+		{
+			AActor* HitActor = HitResult.GetActor();
+			
+			if (HitActor && HitActor != this) // 부딪힌 액터가 존재하고 자신이 아닌 경우에만 성립
+			{
+				
+				//  디버깅을 위해 검출된 액터들을 빨간색으로 표시
+				if (HitActor->ActorHasTag(TEXT("Enemy")))
+				{
+					DrawDebugSphere(GetWorld(), HitActor->GetActorLocation(), 100.0f, 12, FColor::Red, false, 2.0f);
+					SetHUDStamina();
+					ExecuteGetSkill(HitResult); //각자 수행
+				}
+				
+			}
+		}
+	}
+}
+
+
+void ASlash_Player::ExecuteGetSkill(const FHitResult& HitResult)
+{
+	IHitInterface* Hitinterface = Cast<IHitInterface>(HitResult.GetActor());
+
+	if (Hitinterface)
+	{
+		Hitinterface->Execute_GetSkill(HitResult.GetActor());
+	}
+
+}
+
+
+
 void ASlash_Player::SkillEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 }
 
-void ASlash_Player::PlaySkill()
-{
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
-	if (CanSkill(AnimInstance))
-	{
-		AnimInstance->Montage_Play(BurstSkill_Montage, 1.5f);
-		ActionState = EActionState::EAS_Burst;
-		
-	}
-}
 bool ASlash_Player::CanSkill(UAnimInstance* AnimInstance)
 {
 	return AnimInstance && BurstSkill_Montage && CanAttack() && (Attributes->GetStamina() > 50.0f) && (ActionState == EActionState::EAS_Unoccupied);
@@ -539,7 +620,6 @@ void ASlash_Player::SetHUDStamina()
 		SlashOverlay->SetStaminaText(Attributes->GetStamina(), Attributes->Get_MaxStamina());
 	}
 }
-
 
 
 

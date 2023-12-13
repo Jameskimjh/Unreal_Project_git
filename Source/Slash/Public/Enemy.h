@@ -27,6 +27,8 @@ public:
 	
 	// <IHitInterface>
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
+	virtual void GetSkill_Implementation() override;
+
 	// <IHitInterface>
 	virtual void HandleDamage(float DamageAmount) override;
 

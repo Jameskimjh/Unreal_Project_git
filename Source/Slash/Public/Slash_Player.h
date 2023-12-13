@@ -97,6 +97,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void BurstSkill();
 
+	void Skill_Check(TArray<FHitResult>& HitResults);
+
 	UFUNCTION(BlueprintCallable)
 	void SkillEnd();
 
@@ -111,7 +113,8 @@ private:
 	void SetHUDHealth();
 	void SetHUDStamina();
 	
-	
+	void ExecuteGetSkill(const FHitResult& HitResult);
+
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* springArm;
 
@@ -126,7 +129,9 @@ private:
 	
 	float restoreHP;
 
-
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	float Skill_Radius;
+	
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* EquipMontage;
 	

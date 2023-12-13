@@ -39,6 +39,25 @@ void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* H
 	SpawnHitParticles(ImpactPoint);
 }
 
+void ABaseCharacter::GetSkill_Implementation()
+{
+	if (IsAlive()) // Hitter는 부딪힌 위치를 얘기해주는거라 지워도 될 듯 ??
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(SkillHitReactMontage, 1.2f);
+		}
+
+	}
+	else
+	{
+		Die();
+	}
+
+}
+
 
 
 
@@ -249,6 +268,7 @@ void ABaseCharacter::SetComboCheckTimer()
 void ABaseCharacter::ComboCheck()
 {
 	ComboTimerHandle.Invalidate();
+
 	if (HasNextComboCommand)
 	{
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
