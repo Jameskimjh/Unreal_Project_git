@@ -28,7 +28,7 @@ ABreakableActor::ABreakableActor()
 void ABreakableActor::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Tags.Add(FName("BreakableActor"));
 }
 
 void ABreakableActor::Tick(float DeltaTime)
@@ -62,5 +62,24 @@ void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint, AActor* 
 		World->SpawnActor<AHealthPotion>(HealthPostion, Location, GetActorRotation());
 	}
 	
+}
+
+void ABreakableActor::GetSkill_Implementation()
+{
+	if (bBroken) return;
+
+	bBroken = true;
+	
+	UE_LOG(LogTemp, Warning, TEXT("GetSkill_Breakable"));;
+
+	UWorld* World = GetWorld();
+
+	if (World && HealthPostion)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetSkill_Breakable23"));;
+
+		FVector Location = GetActorLocation();
+		World->SpawnActor<AHealthPotion>(HealthPostion, Location, GetActorRotation());
+	}
 }
 

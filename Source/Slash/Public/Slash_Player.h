@@ -7,7 +7,6 @@
 #include "Weapon.h"
 #include "CharacterType.h"
 #include "PickUpInterface.h"
-#include "Skill/Skill.h"
 #include "Slash_Player.generated.h"
 
 class AItem;
@@ -15,7 +14,6 @@ class UAnimMontage;
 class USlashOverlay;
 class AHealthPotion;
 class USlash_Anim;
-class ASkill;
 
 UCLASS()
 class SLASH_API ASlash_Player : public ABaseCharacter,public IPickUpInterface
@@ -158,8 +156,7 @@ private:
 	TObjectPtr<class UAnimMontage> SkillMontage;
 
 
-	UPROPERTY(EditAnywhere,Category  = "Skill")
-	TSubclassOf<ASkill> skill;
+	
 
 	UPROPERTY(EditAnywhere,Category = "Skill")
 	UParticleSystem* SkillParticle;

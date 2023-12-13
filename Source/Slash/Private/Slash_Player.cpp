@@ -177,6 +177,9 @@ void ASlash_Player::PostInitializeComponents()
 
 //****************************************캐릭터의 전반적인 움직임들 ex) 앞으로 옆으로 뒤로 카메라의 이동****************************
 //******************************************************************************************************************************
+//******************************************************************************************************************************
+//******************************************************************************************************************************
+
 void ASlash_Player::MoveForward(float value)
 {
 	if (ActionState != EActionState::EAS_Unoccupied) return;
@@ -219,6 +222,12 @@ void ASlash_Player::Turn(float value)
 
 //**********************************************************************************************************************************
 //**********************************************************************************************************************************
+//******************************************************************************************************************************
+//******************************************************************************************************************************
+
+
+
+
 
 //************************************************ 스킬 구현************************************************************************
 //*********************************************************************************************************************************
@@ -262,7 +271,7 @@ void ASlash_Player::BurstSkill()
 	{
 		AActor* Player = PlayerController->GetPawn();
 
-		if (World && skill && Player)
+		if (World  && Player)
 		{
 			IgnoreActors.Add(Player);
 			
@@ -274,7 +283,6 @@ void ASlash_Player::BurstSkill()
 			// GetSkill을 호출한다 그러면 이미 0이 된 상태이기 때문에 BaseCharacter를 상속받은 Enemy에 있는 Die가 호출됨
 
 			UGameplayStatics::SpawnEmitterAtLocation(World, SkillParticle, Location, true);
-		
 			Skill_Check(HitResults);
 			
 			Attributes->HandleStamina(-50.0f);
@@ -293,6 +301,7 @@ void ASlash_Player::Skill_Check(TArray<FHitResult>& HitResults)
 
 	// 플레이어 위치를 중심으로 반경 내의 액터를 검출하는 쿼리 생성
 	FVector PlayerLocation = GetActorLocation();
+	
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this); // 자신은 무시한다
 
@@ -318,7 +327,7 @@ void ASlash_Player::Skill_Check(TArray<FHitResult>& HitResults)
 			{
 				
 				//  디버깅을 위해 검출된 액터들을 빨간색으로 표시
-				if (HitActor->ActorHasTag(TEXT("Enemy")))
+				if (HitActor->ActorHasTag(TEXT("Enemy"))|| HitActor->ActorHasTag(TEXT("BreakableActor")))
 				{
 					DrawDebugSphere(GetWorld(), HitActor->GetActorLocation(), 100.0f, 12, FColor::Red, false, 2.0f);
 					SetHUDStamina();
@@ -414,6 +423,7 @@ void ASlash_Player::Attack() // 공격 함수
 {
 	Super::Attack(); // BaseCharacter에서 선언된 함수를 오버라이딩 함
 
+	// Player가 랜덤 모션으로 공격하게 해줌
 	/*if (CanAttack())
 	{
 		PlayAttackMontage();
