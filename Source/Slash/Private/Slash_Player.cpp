@@ -126,8 +126,9 @@ void ASlash_Player::AddPotion(AHealthPotion* Potion)
 
 void ASlash_Player::UsingPotion()
 {
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 	if (Attributes->GetPotion() <= 0) return;
-
+	
 	if (Attributes && SlashOverlay)
 	{
 
