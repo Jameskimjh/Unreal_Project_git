@@ -54,6 +54,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 {
 	HandleDamage(DamageAmount);
 	CombatTarget = EventInstigator->GetPawn();
+
 	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"));
 	
 
@@ -117,6 +118,7 @@ void AEnemy::GetSkill_Implementation()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
 	if (PawnSensing)
 	{
 		PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);

@@ -284,6 +284,7 @@ void ASlash_Player::BurstSkill()
 			// GetSkill을 호출한다 그러면 이미 0이 된 상태이기 때문에 BaseCharacter를 상속받은 Enemy에 있는 Die가 호출됨
 
 			UGameplayStatics::SpawnEmitterAtLocation(World, SkillParticle, Location, true);
+			//UGameplayStatics::PlayWorldCameraShake(World,,UCameraShakeBase::StaticClass(), GetActorLocation(),0.0f,1000.0f,)
 			Skill_Check(HitResults);
 			
 			Attributes->HandleStamina(-50.0f);
@@ -305,7 +306,6 @@ void ASlash_Player::Skill_Check(TArray<FHitResult>& HitResults)
 	
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this); // 자신은 무시한다
-
 
 	bool bHit = GetWorld()->SweepMultiByChannel(
 		HitResults,
