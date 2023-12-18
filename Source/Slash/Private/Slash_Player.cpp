@@ -119,7 +119,7 @@ void ASlash_Player::AddPotion(AHealthPotion* Potion)
 {
 	if (Attributes && SlashOverlay)
 	{
-		Attributes->AddPotion(Potion->GetPotion());
+		Attributes->AddPotion(Potion->GetPotion());//이름이 AddPotion으로 같음
 		SlashOverlay->SetPotion(Attributes->GetPotion());
 	}
 }
