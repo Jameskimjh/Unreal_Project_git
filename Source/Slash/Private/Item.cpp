@@ -43,10 +43,10 @@ void AItem::Tick(float DeltaTime)
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	IPickUpInterface* PickUpInterface = Cast<IPickUpInterface>(OtherActor);
-
+	
 	if (PickUpInterface)
 	{
-		PickUpInterface->SetOverlappingItem(this);
+		PickUpInterface->SetOverlappingItem(this); //PickUpInterface를 Slash_Player가 상속받았기 때문에 사용가능
 	}
 
 }

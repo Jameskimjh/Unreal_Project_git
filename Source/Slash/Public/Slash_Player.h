@@ -130,6 +130,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Skill")
 	float Skill_Radius;
 	
+	float BurstStkill_Damage = 50.0f;
+
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* EquipMontage;
 	
@@ -153,7 +155,9 @@ private:
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "SKill")
-	TObjectPtr<class UAnimMontage> SkillMontage;
+	TObjectPtr<class UAnimMontage> BladeSkill;
+
+	
 
 
 	

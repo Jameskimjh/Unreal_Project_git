@@ -90,10 +90,10 @@ private:
 
 
 	UPROPERTY(EditAnywhere)
-	double CombatRadius = 350.0f;
+	double CombatRadius = 500.0f;
 
 	UPROPERTY(EditAnywhere)
-	double AttackRadius = 100.0f;
+	double AttackRadius = 150.0f;
 
 	UPROPERTY()
 	class AAIController* EnemyController;

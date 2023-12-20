@@ -27,5 +27,6 @@ void AUIControllerClass::HideRestartWidget()
 
 	SetInputMode(FInputModeGameOnly());
 	bShowMouseCursor = false;
+	
 
 }

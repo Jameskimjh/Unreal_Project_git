@@ -68,17 +68,17 @@ void ASlash_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction(FName("Jump"),   IE_Pressed, this, &ASlash_Player::Jump); // 점프
 	PlayerInputComponent->BindAction(FName("Equip"),  IE_Pressed, this, &ASlash_Player::RKeyPressed); //장비
 
-	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ASlash_Player::Attack); //공격
-	PlayerInputComponent->BindAction(FName("Dash"), IE_Pressed, this, &ASlash_Player::PlayRoll); // 대쉬
-	PlayerInputComponent->BindAction(FName("Potion"), IE_Pressed, this, &ASlash_Player::UsingPotion); // 물약 사용
-	PlayerInputComponent->BindAction(FName("Burst"), IE_Pressed, this, &ASlash_Player::PlaySkill);// 스킬 사용
+	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ASlash_Player::Attack); //공격 , 마우스 왼쪽키에 바인딩
+	PlayerInputComponent->BindAction(FName("Dash"), IE_Pressed, this, &ASlash_Player::PlayRoll); // 구르기 , 'Shift'에 바인딩
+	PlayerInputComponent->BindAction(FName("Potion"), IE_Pressed, this, &ASlash_Player::UsingPotion); // 물약 사용, 'E'키에 바인딩
+	PlayerInputComponent->BindAction(FName("Burst"), IE_Pressed, this, &ASlash_Player::PlaySkill);// 스킬 사용, 'Q'키에 바인딩
 
 	
 }
 
 void ASlash_Player::Jump()
 {
-	if (IsUnoccupied()  )
+	if (IsUnoccupied())
 	{
 		Super::Jump();
 	}
@@ -279,7 +279,7 @@ void ASlash_Player::BurstSkill()
 			UE_LOG(LogTemp, Warning, TEXT("SKillON"));
 			
 			
-			UGameplayStatics::ApplyRadialDamage(World, 50.0f, GetActorLocation(), Skill_Radius, UDamageType::StaticClass(), IgnoreActors, this, this->GetController(), false, ECC_Visibility);
+			UGameplayStatics::ApplyRadialDamage(World, BurstStkill_Damage, GetActorLocation(), Skill_Radius, UDamageType::StaticClass(), IgnoreActors, this, this->GetController(), false, ECC_Visibility);
 			// 여기서 먼저 ApplyRadialDamage를 통해 TakeDamage를 호출하고 Health 값을 0으로 만든 다음에
 			// GetSkill을 호출한다 그러면 이미 0이 된 상태이기 때문에 BaseCharacter를 상속받은 Enemy에 있는 Die가 호출됨
 
@@ -320,7 +320,7 @@ void ASlash_Player::Skill_Check(TArray<FHitResult>& HitResults)
 	// 검출된 액터들에 대한 처리
 	if (bHit )
 	{
-		for (const FHitResult& HitResult : HitResults)
+		for (const FHitResult& HitResult : HitResults) // HitResult의 각 요소들을 수정하지 않고 확인만 함
 		{
 			AActor* HitActor = HitResult.GetActor();
 			
@@ -332,12 +332,12 @@ void ASlash_Player::Skill_Check(TArray<FHitResult>& HitResults)
 				{
 					DrawDebugSphere(GetWorld(), HitActor->GetActorLocation(), 100.0f, 12, FColor::Red, false, 2.0f);
 					SetHUDStamina();
-					ExecuteGetSkill(HitResult); //각자 수행
+					ExecuteGetSkill(HitResult); // 감지된 Enemy들 각각 수행
 				}
-				
 			}
 		}
 	}
+	
 }
 
 
@@ -385,15 +385,11 @@ bool ASlash_Player::CanSkill(UAnimInstance* AnimInstance)
 
 void ASlash_Player::RKeyPressed()
 {
-	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem); //SetOverlappingItem 함수에 의해 OverlappingItem에
+	// 들어가 있는데 이를 AWeapon타입으로 캐스팅
 	
 	if (OverlappingWeapon)
 	{
-		//OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"),this,this );
-		//State = ECharacterState::ECS_EquippedOnehandedWeapon;
-		//OverlappingItem = nullptr;
-		//EquippedWeapon = OverlappingWeapon;
-
 		EquipWeapon(OverlappingWeapon);
 	}
 	
@@ -432,7 +428,7 @@ void ASlash_Player::Attack() // 공격 함수
 		ActionState = EActionState::EAS_Attacking;
 	}*/
 
-	if (CanAttack() && !GetCharacterMovement()-> IsFalling())
+	if (CanAttack() && !GetCharacterMovement()-> IsFalling()) // 착지한 상태에서 가능하도록 함
 	{
 		ProcessComboCommand();
 	}
@@ -452,6 +448,7 @@ void ASlash_Player::EquipWeapon(AWeapon* Weapon)
 
 
 // BlueprintCallable로 애니메이션 블루프린트에서 몽타주의 노티파이에 연결시킴
+
 void ASlash_Player::AttackEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
@@ -473,8 +470,8 @@ void ASlash_Player::PlayRoll()
 	ActionState = EActionState::EAS_Dash;
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Roll(RollMontage);
-	FVector NewLocation = GetActorLocation() + GetActorForwardVector() * 3000.0f * GetWorld()->GetDeltaSeconds();
-	SetActorLocation(NewLocation);
+	//FVector NewLocation = GetActorLocation() + GetActorForwardVector() * 3000.0f * GetWorld()->GetDeltaSeconds();
+	//SetActorLocation(NewLocation);
 
 }
 
