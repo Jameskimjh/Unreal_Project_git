@@ -20,6 +20,7 @@ public:
 	
 	virtual void GetHit_Implementation(const FVector& ImpactPoint , AActor* Hitter) override;
 	virtual void GetSkill_Implementation() override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -29,6 +30,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCapsuleComponent* Capsule;
+
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Breakable Properties")

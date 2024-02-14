@@ -48,7 +48,7 @@ void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOw
 
 }
 
-void AWeapon::DeactivateEmbers()
+void AWeapon::DeactivateEmbers() //아이템 효과 
 {
 	if (ItemEffect)
 	{
@@ -104,7 +104,9 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 			return;
 		}
 		UGameplayStatics::ApplyDamage(BoxHit.GetActor(),Damage,GetInstigator()->GetController(),this,UDamageType::StaticClass());
+		
 		ExecuteGetHit(BoxHit);
+		
 		CreateFields(BoxHit.ImpactPoint);
 
 	}
@@ -129,6 +131,7 @@ void AWeapon::BoxTrace(FHitResult& BoxHit)
 	const FVector End = BoxTraceEnd->GetComponentLocation();
 
 	TArray<AActor*> ActorsToIgnore;
+	
 	ActorsToIgnore.Add(this);
 
 	for (AActor* Actor : IgnoreActors)

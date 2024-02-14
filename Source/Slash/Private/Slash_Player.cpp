@@ -112,7 +112,7 @@ void ASlash_Player::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hi
 
 void ASlash_Player::SetOverlappingItem(AItem* Item)
 {
-	OverlappingItem = Item;
+	OverlappingItem = Item; //Item 파일에서 이미 포함됐음
 }
 
 void ASlash_Player::AddPotion(AHealthPotion* Potion)
@@ -259,6 +259,7 @@ void ASlash_Player::BurstSkill()
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
 	
 	FVector SpawnLocation = GetActorLocation() + FVector(0.0f, 0.0f, -90.0f);
+
 	FTransform Location = FTransform(GetActorRotation(), SpawnLocation, GetActorScale3D()*2.0f);
 	
 	// 만약 Execute_ 메서드를 사용하고 싶으면 부딪힌 정보를 가져와야하는데 여긴 없다
@@ -284,7 +285,6 @@ void ASlash_Player::BurstSkill()
 			// GetSkill을 호출한다 그러면 이미 0이 된 상태이기 때문에 BaseCharacter를 상속받은 Enemy에 있는 Die가 호출됨
 
 			UGameplayStatics::SpawnEmitterAtLocation(World, SkillParticle, Location, true);
-			//UGameplayStatics::PlayWorldCameraShake(World,,UCameraShakeBase::StaticClass(), GetActorLocation(),0.0f,1000.0f,)
 			Skill_Check(HitResults);
 			
 			Attributes->HandleStamina(-50.0f);
@@ -328,10 +328,11 @@ void ASlash_Player::Skill_Check(TArray<FHitResult>& HitResults)
 			{
 				
 				//  디버깅을 위해 검출된 액터들을 빨간색으로 표시
-				if (HitActor->ActorHasTag(TEXT("Enemy"))|| HitActor->ActorHasTag(TEXT("BreakableActor")))
+				if (HitActor->ActorHasTag(TEXT("Enemy")) || HitActor->ActorHasTag(TEXT("BreakableActor")))
 				{
-					DrawDebugSphere(GetWorld(), HitActor->GetActorLocation(), 100.0f, 12, FColor::Red, false, 2.0f);
+					//DrawDebugSphere(GetWorld(), HitActor->GetActorLocation(), 100.0f, 12, FColor::Red, false, 2.0f);
 					SetHUDStamina();
+
 					ExecuteGetSkill(HitResult); // 감지된 Enemy들 각각 수행
 				}
 			}
@@ -438,6 +439,7 @@ void ASlash_Player::Attack() // 공격 함수
 } 
 
 // 무기 장착 *************************************************
+
 void ASlash_Player::EquipWeapon(AWeapon* Weapon)
 {
 	Weapon->Equip(GetMesh(), FName("RightHandSocket"), this, this);

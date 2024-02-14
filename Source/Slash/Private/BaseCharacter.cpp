@@ -259,6 +259,7 @@ void ABaseCharacter::SetComboCheckTimer()
 	ensure(ComboActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
 
 	const float AttackSpeedRate = 1.3f;
+
 	float ComboEffectiveTime = (ComboActionData->EffectiveFrameCount[ComboIndex] / ComboActionData->FrameRate) / AttackSpeedRate;
 	
 	if (ComboEffectiveTime > 0.0f)
